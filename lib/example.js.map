@@ -1,0 +1,19 @@
+{
+  "version": 3,
+  "sources": [
+    "../src/example.js"
+  ],
+  "names": [
+    "a",
+    "b",
+    "map",
+    "item",
+    "console",
+    "log"
+  ],
+  "mappings": ";;AAAA;AACE,MAAIA,CAAC,GAAG,EAAR;AACA,MAAIC,CAAC,GAAG,CAAR;AACD,C,CACD;;AACAA,CAAC,GAAG,CAAC,CAAD,EAAG,CAAH,EAAK,CAAL,EAAQC,GAAR,CAAY,UAAAC,IAAI;AAAA,SAAIA,IAAI,GAAG,CAAX;AAAA,CAAhB,CAAJ;AACAC,OAAO,CAACC,GAAR,CAAYJ,CAAZ",
+  "sourcesContent": [
+    "{\r\n  let a = 10;\r\n  var b = 1;\r\n}\r\n// 转码前\r\nb = [1,2,3].map(item => item + 1);\r\nconsole.log(b)\r\n"
+  ],
+  "file": "example.js"
+}
