@@ -65,14 +65,57 @@
 
 // 为什么要用块级作用域
 // 第一种场景，内存变量可能会覆盖外层变量
-var tmp = new Date();
-function f() {
-  console.log(tmp);
+// var tmp = new Date();
+// function f() {
 
-  if (true) {
-    var tmp = 'hello world'
-  }
+//   console.log(tmp);
 
-}
+//   if (true) {
+//    var tmp = 'hello world'
+//    console.log(tmp);
 
-f()
+//   }
+
+// }
+
+// f()
+
+// // 块级作用域内部函数声明语句，建议不要使用
+// {
+//   let a = 'secret'
+//   function f() {
+//     return a;
+//   }
+
+// }
+
+// // 块级作用域内部，优先使用函数表达式
+// {
+//   let a ='secret'
+//   let f = function(){
+//     return a;
+//   }
+// }
+
+// // const 命令 一旦声明就不能改变 只声明不赋值也报错
+// const PI = 3.1415
+// PI
+// PI = 3
+
+// const foo = {}
+
+// foo.prop = 123;
+// foo.prop
+// // 将foo指向另外一个对象，就会报错
+// foo = {}
+
+// const a = []
+// a.push('hello')
+// a.length = 0
+// a = ['hello']
+
+// 冻结整个对象 Object.freeze 严格模式下会报错
+'use strict'
+const foo1 = Object.freeze({})
+foo1.prop =111
+console.log(foo1)
