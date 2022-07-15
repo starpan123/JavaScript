@@ -114,8 +114,29 @@
 // a.length = 0
 // a = ['hello']
 
-// 冻结整个对象 Object.freeze 严格模式下会报错
-'use strict'
-const foo1 = Object.freeze({})
-foo1.prop =111
-console.log(foo1)
+// // 冻结整个对象 Object.freeze 严格模式下会报错
+// 'use strict'
+// const foo1 = Object.freeze({})
+// foo1.prop =111
+// console.log(foo1)
+
+var constantize = (obj)=>{
+  Object.freeze(obj);
+  Object.keys(obj).forEach((key,i)=>{
+    if(typeof obj[key] === 'object'){
+      constantize(obj[key])
+    }
+  })
+}
+
+// es6 有6种声明变量的方式 var function let const import class
+
+// 顶层对象属性
+window.a = 1
+console.log(1)
+a = 2
+console.log(window.a)
+
+// var、function声明的全局变量属于顶层对象属性
+// let const class 声明的全局变量不属于顶层对象属性
+
