@@ -68,7 +68,7 @@ console.log(foo)
 
 let [x11, y11 = 'b'] = ['a']
 let [x111, y1111 = 'b'] = ['a', undefined]
-console.log(x11, y11, x111, y111)
+console.log(x11, y11, x111, y1111)
 
 
 let [x211 = 1] = [undefined]
