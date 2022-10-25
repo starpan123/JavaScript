@@ -158,3 +158,34 @@ console.log(RE_TWICE.test('aaa!aa'))
  * ES2022新增d修饰符
  * 让exec()多了一个属性indices能获取到匹配结果的开始位置和结束位置集合
  *  */
+const text = 'zabbcdef';
+const red = /ab/d;
+const redd = /ab+(?<Z>cd)/d;
+const resultD = red.exec(text)
+const resultDD = redd.exec(text)
+console.log(resultD)
+console.log(resultDD)
+
+// 13.String.prototype.matchAll()
+/**
+ * 如果一个正则表达式在字符串里面有多个匹配，现在一般使用g小修饰符或y修饰符
+ * 在循环里面逐一取出
+ * */
+var regexss =  /test\d?/g;
+var stringaaa = 'test1test2test3';
+var matches = [];
+var match;
+while (match = regexss.exec(stringaaa)) {
+  matches.push(match)
+}
+console.log(matches)
+/**
+ * ES2020增加了String.prototype.matchAll()方法，可以一次性取出所有匹配。
+ * 不过，它返回的是一个遍历器(Iterator)，而不是数组 
+ */
+const string20 = 'test1test2test3'
+const regex20 = /test\d?/g
+console.log(string20.matchAll(regex20))
+for (const match20 of string20.matchAll(regex20)) {
+  console.log(match20);
+}
