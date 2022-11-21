@@ -139,4 +139,228 @@ function bar(func = () => foos) {
   let foos = "inner";
   console.log(func());
 }
-bar();
+bar(() => 001);
+// 下面这种写法fooss没有定义会报错
+// function barr(func = () => fooss) {
+//   let fooss = "inner";
+//   console.log(func());
+// }
+// barr();
+var x111 = 1;
+var x222 = 4;
+function foox(
+  x111,
+  x222,
+  y = function () {
+    x111 = 2; // 指向foox的参数x111
+    x222 = 2; // 指向foox的参数x222
+  }
+) {
+  var x111 = 3; // 指向自己
+  x222 = 5; // 指向foox的参数x222
+  y(); // 改变foox参数变量x111和x222
+  console.log(x111); // 指向foox内部定义x111
+  console.log(x222); // 指向foox的参数x222
+}
+
+foox(); // 3:结果指向foox函数内部x111 2:指向foox的参数x222
+x111; // 1:指向全局x111
+//【6】应用
+// 参数不可省略
+function throwIfMissing() {
+  throw new Error("Missing parameter");
+}
+
+function fooaa(mustBeProvided = throwIfMissing()) {
+  return mustBeProvided;
+}
+
+//fooaa();
+// Error: Missing parameter
+fooaa(123);
+// 参数可省略，给参数默认赋值undefined
+function foobb(opt = undefined) {}
+foobb();
+
+// 2.rest参数
+/**
+ * ES6引入rest参数（形式为...变量名），用于获取函数的多余参数，
+ * 这样就不需要使用arguments对象了。rest参数搭配的变量是一个数组，
+ * 该变量将多余的参数放入数组中。
+ */
+function add(...values) {
+  let sum = 0;
+  for (const val of values) {
+    sum += val;
+  }
+  console.log(sum);
+}
+add(1, 2, 3, 4);
+// 下面是一个rest参数代替arguments变量的例子，rest写法更加简洁
+/**
+ * arguments对象不是数组，而是一个类似数组的对象
+ * 所以使用数组的方法需要用Array.from将其转换为数组
+ * rest参数就不存在这个问题，就是一个数组，k
+ */
+function sortNumbers() {
+  console.log(Array.from(arguments).sort());
+}
+sortNumbers(5, 6, 45, 2);
+const sortNumbersRest = (...numbers) => numbers.sort();
+console.log(sortNumbersRest(3, 2, 5, 1));
+/**
+ * 利用rest参数改写数组push方法
+ */
+function push(arr, ...items) {
+  items.forEach((item) => {
+    arr.push(item);
+    console.log(item);
+  });
+}
+var ap = [];
+push(ap, 1, 2, 3);
+// rest参数之后不能再有其他参数（只能是最后一个参数），否则会报错
+// function error(params,...aaa,dsa) {
+// }
+// 函数的length属性，不包括rest参数
+console.log(function (s) {}.length);
+console.log(function (...s) {}.length);
+console.log(function (a, ...s) {}.length);
+
+// 3.严格模式
+// ES6函数内部不能使用严格模式
+function Strict(a, b) {
+  "use strict";
+  console.log("sss");
+}
+Strict("s", "s");
+
+// 4.name属性
+function fooName(params) {}
+console.log(fooName.name);
+// 匿名函数返回变量名
+var sf = function () {};
+console.log(sf.name);
+// 具名函数返回函数名
+const barf = function bazf(params) {};
+console.log(barf.name);
+// Function构造函数返回的函数实例，name属性的值为anonymous
+console.log(new Function().name);
+// bind返回的函数，name属性值会加上bound前缀
+function fooBind() {}
+console.log(fooBind.bind({}).name);
+// 匿名函数bind只返回bound
+console.log(function () {}.bind({}).name);
+
+// 5.箭头函数
+// 基本用法ES6允许使用箭头(=>)定义函数
+var fv = (v) => v;
+// 等同于
+var fvv = function (v) {
+  return v;
+};
+// 箭头函数不需要参数或者多个参数，就使用一个圆括号代表参数部分
+var fss = () => 5;
+// 等同于
+var fssf = function () {
+  return 5;
+};
+console.log(fss());
+// 带参数的箭头函数
+var sumf = (num1, num2) => num1 + num2;
+// 等同于
+var sumf1 = function (num1, num2) {
+  return num1 + num2;
+};
+console.log(sumf(1, 2));
+console.log(sumf1(1, 2));
+
+/**
+ * 如果箭头函数的代码块部分多于一条语句，就要使用大括号将他们括起来，
+ * 并使用return语句返回
+ * 如果要返回一个对象，需要用()将对象包裹，不然会被误判断为函数代码块
+ */
+var sumf2 = (num1, num2) => {
+  let a = 1;
+  let b = 2;
+  return a;
+};
+console.log(sumf2(1, 1));
+let getTempItem = (id) => ({
+  id: id,
+  nams: "sss",
+});
+console.log(getTempItem(1));
+// 下面这种情况可以运行，但是返回的为undefined
+let unf = () => {
+  a: 1;
+};
+console.log(unf());
+// 如果箭头函数只有一行语句，且不需要返回值，可以采用下面的写法，就不用写大括号了
+let fn = () => void doesNotReturn();
+console.log(fn());
+function doesNotReturn() {
+  console.log("doesNotReturn");
+}
+// 箭头函数可以与变量解构结合使用
+const full = ({ first, last }) => first + " " + last;
+// 等同于
+function fullf(person) {
+  return person.first + " " + person.last;
+}
+console.log(full({ first: 1, last: 2 }));
+// 箭头函数使得表达更加简洁
+const isEven = (n) => n % 2 === 0;
+const square = (n) => n * n;
+// 箭头函数简化回调函数
+// 普通函数写法
+[1, 2, 3].map(function (x) {
+  return x * x;
+});
+var resss = [2, 3, 1].sort(function (a, b) {
+  return a - b;
+});
+console.log(resss);
+// 箭头函数写法
+console.log([1, 2, 3].map((x) => x * x));
+console.log([2, 3, 1].sort((a, b) => a - b));
+// rest参数与箭头函数结合的例子
+const numbers11 = (...nums) => nums;
+console.log(numbers11(1, 3, 5, 7, 9, 11));
+// 箭头函数内部的this指向是固定的，指向上层作用域中的this
+// 普通函数this指向是可变的
+function foost() {
+  setTimeout(() => {
+    console.log("id:", this.id);
+  }, 100);
+}
+var id = 21;
+foost.call({ id: 42 });
+// 普通函数和箭头函数，内部this指向
+function Timer() {
+  this.s1 = 0;
+  this.s2 = 0;
+  // 箭头函数
+  setInterval(() => this.s1++, 1000);
+  // 普通函数
+  setInterval(function () {
+    this.s2++;
+  }, 1000);
+}
+var timer = new Timer();
+setTimeout(() => console.log("s1: ", timer.s1), 3100); // 指向Timer函数
+setTimeout(() => console.log("s2: ", timer.s2), 3100); // 指向全局对象
+// 箭头函数this指向固化，绑定this使得其不再改变，有利于封装回调函数
+var handler = {
+  id: "123456",
+  init: function () {
+    document.addEventListener(
+      "click",
+      (event) => this.doSomething(event.type),
+      false
+    );
+  },
+  doSomething: function (type) {
+    console.log("Handling " + type + " for " + this.id);
+  },
+};
