@@ -335,21 +335,21 @@ function foost() {
   }, 100);
 }
 var id = 21;
-foost.call({ id: 42 });
+//foost.call({ id: 42 });
 // 普通函数和箭头函数，内部this指向
-function Timer() {
-  this.s1 = 0;
-  this.s2 = 0;
-  // 箭头函数
-  setInterval(() => this.s1++, 1000);
-  // 普通函数
-  setInterval(function () {
-    this.s2++;
-  }, 1000);
-}
-var timer = new Timer();
-setTimeout(() => console.log("s1: ", timer.s1), 3100); // 指向Timer函数
-setTimeout(() => console.log("s2: ", timer.s2), 3100); // 指向全局对象
+// function Timer() {
+//   this.s1 = 0;
+//   this.s2 = 0;
+//   // 箭头函数
+//   setInterval(() => this.s1++, 1000);
+//   // 普通函数
+//   setInterval(function () {
+//     this.s2++;
+//   }, 1000);
+// }
+// var timer = new Timer();
+//setTimeout(() => console.log("s1: ", timer.s1), 3100); // 指向Timer函数
+//setTimeout(() => console.log("s2: ", timer.s2), 3100); // 指向全局对象
 // 箭头函数this指向固化，绑定this使得其不再改变，有利于封装回调函数
 var handler = {
   id: "123456",
@@ -364,3 +364,180 @@ var handler = {
     console.log("Handling " + type + " for " + this.id);
   },
 };
+
+// 箭头函数不适用的场景 不要使用箭头函数定义对象的属性
+globalThis.a = 1;
+const cat = {
+  lives: 9,
+  jumps: () => console.log(this.a),
+};
+cat.jumps();
+
+// 嵌套的箭头函数
+// ES5多重函数嵌套
+function insert(value) {
+  return {
+    into: function (array) {
+      return {
+        after: function (afterValue) {
+          array.splice(array.indexOf(afterValue) + 1, 0, value);
+          console.log(array);
+          return array;
+        },
+      };
+    },
+  };
+}
+insert(1).into([1, 3]).after(3);
+// 上面方法可以用箭头函数改写
+let insertArrow = (value) => ({
+  into: (array) => ({
+    after: (afterValue) => {
+      array.splice(array.indexOf(afterValue) + 1, 0, value);
+      console.log(array);
+      return array;
+    },
+  }),
+});
+insertArrow(1).into([1, 3]).after(3);
+
+const plus1 = (a) => a + 1;
+const mult2 = (a) => a * 2;
+console.log(mult2(plus1(5)));
+// 箭头函数还有一个功能，就是可以很方便的改写λ演算
+// λ演算的写法
+//fix = λf.(λx.f(λv.x(x)(v)))(λx.f(λv.x(x)(v)))
+// ES6的写法
+var fix = (f) => ((x) => f((v) => x(x)(v)))((x) => f((v) => x(x)(v)));
+
+// 6.尾调用优化
+/**
+ * 什么是尾调用
+ * 函数式编程的一个重要概念，指某个函数的最后一步是调用另外一个函数
+ */
+// function f(x) {
+//   return g(x);
+// }
+
+// // 下面的几种情况不属于尾调用
+// // 最后一步不是函数调用
+// function f(x) {
+//   let y = g(x);
+//   return y;
+// }
+
+// function f(x) {
+//   return g(x) + 1;
+// }
+
+// function f(x) {
+//   g(x);
+// }
+// // 尾调用不一定出现在函数尾部，只要是最后一步操作即可
+// function f(x) {
+//   if (x > 0) {
+//     return m(x);
+//   }
+//   return n(x);
+// }
+// // 尾调用优化
+// function f() {
+//   let m = 1;
+//   let n = 2;
+//   return g(m + n);
+// }
+// // 等同于
+// function f() {
+//   return g(3);
+// }
+// // 等同于
+//g(3);
+
+// 尾递归
+// 函数调用自身，称为递归。如果尾调用自身，就称为尾递归
+// 递归计算阶乘 常规阶乘计算，递归耗费内存，保存无数个调用帧
+// 下面保存了n个调用帧，复杂度为O(n)
+function factorial(n) {
+  if (n === 1) {
+    return 1;
+  }
+  return n * factorial(n - 1);
+}
+console.log(factorial(5));
+// 使用尾递归实现递归，只保留一个调用记录，复杂度O(1)
+function factorialTail(n, res) {
+  if (n === 1) {
+    return res;
+  }
+  return factorialTail(n - 1, n * res);
+}
+console.log(factorialTail(5, 1));
+
+// 斐波那契数列（Fibonacci）
+// 非尾递归的斐波那契数列（Fibonacci）
+function Fibonacci(n) {
+  if (n <= 1) {
+    return 1;
+  }
+  return Fibonacci(n - 1) + Fibonacci(n - 2);
+}
+console.log(Fibonacci(4));
+//console.log(Fibonacci(100)); 计算慢超时会加载100递归记录，浪费内存
+
+// 尾递归实现斐波那契数列（Fibonacci）
+
+// 计算很快不会发生栈溢出，只保留一次调用记录，节省内存
+function FibonacciTail(n, a = 1, res = 1) {
+  let a1 = res;
+  let a2 = a + res;
+  if (n <= 1) {
+    return res;
+  }
+  return FibonacciTail(n - 1, a1, a2);
+}
+console.log(FibonacciTail(100));
+
+// 递归函数改写
+/**
+ * 上述的递归传入参数过多，
+ * 1.在外层再封装一层重新写一个函数进行包装，
+ * 2.给默认需要的参数默认值
+ **/
+function factorialTailNormal(n) {
+  return factorialTail(n, 1);
+}
+console.log(factorialTailNormal(5));
+
+/**
+ * 函数式编程的一个概念 柯里化（currying）
+ * 将多参数的函数转换成单参数的形式
+ * 下面使用柯里化进行递归函数改写
+ */
+function currying(fn, n) {
+  return function (m) {
+    return fn.call(this, m, n);
+  };
+}
+const factorialTailCurrying = currying(factorialTail, 1);
+console.log(factorialTailCurrying(5));
+// 非ES6情况下尾递归优化只在严格模式下生效
+
+// 尾递归优化的实现
+
+// 7.函数参数的尾逗号
+// ES2017 在参数最后添加一个逗号
+// function ssswew(a, b,) {}
+
+// 8.Function.prototype.toString()
+// ES2019对函数实例的toString()方法做出了修改
+// toString()方法返回函数代码本身，以前会省略主注释和空格
+// 修改前toString返回函数本身，修改后可以返回原始代码一模一样
+console.log(function /**ssss */ name(params) {}.toString())
+
+// 9.catch命令的参数省略
+// ES2019可以允许catch语句省略参数
+try {
+  
+} catch {
+  
+}
