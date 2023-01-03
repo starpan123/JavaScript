@@ -384,8 +384,30 @@ console.log([2, 3, 4].flatMap((x) => [x, x * 2]));
 // 10.实例方法：at()
 // 接受一个整数作为参数，可以为负数，支持负索引
 const arrat = [5, 12, 8, 130, 44];
-console.log(arrat.at(-1))
-console.log(arrat.at(1))
+console.log(arrat.at(-1));
+console.log(arrat.at(1));
 
 // 11.实例方法：toReversed()，toSorted()，toSpliced()，with()
+// 很多传统的操作数组的方法会改变原数组，为了不改变原数组进行数组操作
+// 提供上述的4种方法，不改变原数组，而是返回一个原数组的拷贝
+const sequence = [1, 2, 3];
+console.log(sequence.toReversed());
+console.log(sequence);
+
+// 12.实例方法：group()，groupToMap()
+/**
+ * 满足数组的分组需求
+ * group()的参数是一个分组函数，原数组的每个成员都会依次执行这个函数，
+ * 确定自己是哪一个组
+ */
+const array = [1, 2, 3, 4, 5];
+const arrayG = array.groupBy((num, index, array) => {
+  return num % 2 === 0 ? "even" : "odd";
+});
+console.log(arrayG);
+
+// 13.数组的空位
+console.log(Array(3));
+
+// 14.Array.prototype.sort()的排序稳定性
 
