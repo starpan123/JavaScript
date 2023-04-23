@@ -312,5 +312,5 @@ console.log(Object.hasOwn(oObject, 'b'))
 // Object.hasOwn()对于不继承的对象不会报错，hasOwnProperty()会报错
 const objectNull = Object.create(null)
 console.log(Object.hasOwn(objectNull, 'a')) // 正常处理
-console.log(objectNull.hasOwnProperty('a'))// 报错
+//console.log(objectNull.hasOwnProperty('a'))// 报错
 
